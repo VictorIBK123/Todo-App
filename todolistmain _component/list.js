@@ -1,4 +1,4 @@
-import { FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native"
+import { FlatList, Image, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native"
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Octicons from '@expo/vector-icons/Octicons';
@@ -41,6 +41,16 @@ export default function MainListComponent({parentNavigation, navigation, done}){
             setTodos(todos.map((element)=>{
                 if (key==element.key){
                     return ({...element, completed:true})
+                }
+                else{
+                    return (element)
+                }
+            }))
+        }
+        else if(type=='mark as pend'){
+            setTodos(todos.map((element)=>{
+                if (key==element.key){
+                    return ({...element, completed:false})
                 }
                 else{
                     return (element)
@@ -113,6 +123,21 @@ export default function MainListComponent({parentNavigation, navigation, done}){
         setSelectMultiple(false)
         setKeysMarked([])
     }
+    else if(type=='mark as pend'){
+        setTodos(todos.map((element)=>{
+            if (keysMarked.includes(element.key)){
+                return ({...element, completed:false})
+            }
+            else{
+                return (element)
+            }
+        }))
+        parentNavigation.setOptions({
+            headerLeft:()=>null
+        })
+        setSelectMultiple(false)
+        setKeysMarked([])
+    }
     else if (type=='delete'){
         setTodos(todos.filter((element)=>!keysMarked.includes(element.key)))
         parentNavigation.setOptions({
@@ -128,11 +153,11 @@ export default function MainListComponent({parentNavigation, navigation, done}){
     leftDistance.value=0
 },[todos])
     return (
-        <View style={{height:'100%'}}>
+        <ImageBackground imageStyle={{opacity:0.2, resizeMode:'contain'}} source={require('../assets/todo1.png')} style={{height:'100%'}}>
             <FlatList
             keyExtractor={(item)=>item.key.toString()}
                 ListEmptyComponent={()=>{
-                    const image = require("../assets/todo.jpeg")
+                    const image = require("../assets/todo1.png")
                     return(<View style={{backgroundColor:'white', justifyContent:'center',height, width, alignItems:'center'}}>
                         <Image source={image} style={{resizeMode:'contain', height:'50%', width:'70%'}}/>
                         <Text>You've Not Completed a Todo Yet</Text>
@@ -202,18 +227,26 @@ export default function MainListComponent({parentNavigation, navigation, done}){
                         <Octicons name="dot-fill" size={14} color="green" />
                         <Text style={style.text}>Delete</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>{optionClicked('mark')}} style={style.options}>
+                    {!done && <TouchableOpacity onPress={()=>{optionClicked('mark')}} style={style.options}>
                         <Octicons name="dot-fill" size={14} color="green" />
                         <Text style={style.text}>Mark as Completed</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
+                    {done && <TouchableOpacity onPress={()=>{optionClicked('mark as pend')}} style={style.options}>
+                        <Octicons name="dot-fill" size={14} color="green" />
+                        <Text style={style.text}>Mark as Pending</Text>
+                    </TouchableOpacity>}
                 </View>
 
             </AnimatedTouchableOpacity>
             {selectMultiple && <View style={{position:'absolute', bottom:0, height:50, backgroundColor:'green', flexDirection:'row', width, justifyContent:'space-around', alignItems:'center'}}>
-                <TouchableOpacity onPress={()=>selectMultipleFunc('mark')} disabled={keysMarked.length==0} style={[style.selectMultiple, {opacity:keysMarked.length==0 && 0.7} ]}>
+                {!done && <TouchableOpacity onPress={()=>selectMultipleFunc('mark')} disabled={keysMarked.length==0} style={[style.selectMultiple, {opacity:keysMarked.length==0 && 0.7} ]}>
                     <Ionicons name="checkmark-done-sharp" size={24} color="white" />
                     <Text style={{color:'white'}}>Mark as Complete</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>}
+                {done && <TouchableOpacity onPress={()=>selectMultipleFunc('mark as pend')} disabled={keysMarked.length==0} style={[style.selectMultiple, {opacity:keysMarked.length==0 && 0.7} ]}>
+                    <Ionicons name="checkmark-done-sharp" size={24} color="white" />
+                    <Text style={{color:'white'}}>Mark as Pending</Text>
+                </TouchableOpacity>}
                 <TouchableOpacity onPress={()=>selectMultipleFunc('delete')} disabled={keysMarked.length==0} style={[style.selectMultiple, {opacity:keysMarked.length==0 && 0.7}]}>
                     <MaterialIcons name="delete" size={24} color="white" />
                     <Text style={{color:'white'}}>Delete</Text>
@@ -227,7 +260,7 @@ export default function MainListComponent({parentNavigation, navigation, done}){
                     <Text style={{color:'white'}}>Mark All</Text>
                 </TouchableOpacity>}
             </View>}
-        </View>
+        </ImageBackground>
     )
 }const style = StyleSheet.create({
     options:{

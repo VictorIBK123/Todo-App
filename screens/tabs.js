@@ -8,7 +8,9 @@ export default function Tabs({navigation}) {
             <tab.Screen name="notcompleted" options={{title: 'Pending'}}>
                 {(props)=><NotCompleted {...props} parentNavigation={navigation} /> }
             </tab.Screen>
-            <tab.Screen name="completed" component={Completed} options={{title: 'Completed'}} />
+            <tab.Screen name="completed" options={{title: 'Completed'}} >
+                {(props)=><Completed {...props} parentNavigation={navigation} /> }
+            </tab.Screen>
         </tab.Navigator>
         
     )
