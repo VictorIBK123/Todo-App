@@ -1,12 +1,13 @@
-import { FlatList, Image, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native"
+import { Easing, FlatList, Image, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native"
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Octicons from '@expo/vector-icons/Octicons';
-import React ,{ useContext, useEffect, useState } from "react";
+import React ,{ useCallback, useContext, useEffect, useState } from "react";
 import { context } from "../context/context.js"
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Animated, {runOnJS, useAnimatedProps, useSharedValue, withTiming} from "react-native-reanimated";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { useFocusEffect} from "@react-navigation/native";
 export default function MainListComponent({parentNavigation, navigation, done}){
     const {todos, setTodos} = useContext(context)
     // storing items marked
@@ -23,6 +24,8 @@ export default function MainListComponent({parentNavigation, navigation, done}){
     const {height, width} = useWindowDimensions()
     const leftDistance = useSharedValue(0)
     const top = useSharedValue(height)
+    const translateX = useSharedValue(0)//used to translate the component to right when swipe is detected
+    
     // if todo is changed , the left position of each component will be readjested to the default (0), 
     // this is done because when the delete button is pressed in the options, the animation will that will shift the component to be deleted will
     // be shifted to the right, but we have to set it backto 0 when the component is deleted
@@ -78,6 +81,17 @@ export default function MainListComponent({parentNavigation, navigation, done}){
         return (!element.completed)
       })
  }
+
+//  done this so that when the screen is focused, the selectMultiple will be set to false and the keysMarked will be set to an empty array
+ useFocusEffect(
+    useCallback(()=>{
+        setKeysMarked([])
+        setSelectMultiple(false)
+        parentNavigation.setOptions({
+            headerLeft:()=>null
+        })
+    },[])
+ )
   
   const longPressed=(key, type)=>{
     if (type=='markFirst'){
@@ -147,8 +161,10 @@ export default function MainListComponent({parentNavigation, navigation, done}){
         setKeysMarked([])
     }
   }
+
   const animatedStyle = useAnimatedProps(()=>({top:top.value})) //animated style for the options
   const animatedTodoStyle = useAnimatedProps(()=>({transform:[{translateX:leftDistance.value}]}))
+  const animatedSwipeStyle = useAnimatedProps(()=>({transform:[{translateX:translateX.value}]}))
   useEffect(()=>{
     leftDistance.value=0
 },[todos])
@@ -160,7 +176,7 @@ export default function MainListComponent({parentNavigation, navigation, done}){
                     const image = require("../assets/todo1.png")
                     return(<View style={{backgroundColor:'white', justifyContent:'center',height, width, alignItems:'center'}}>
                         <Image source={image} style={{resizeMode:'contain', height:'50%', width:'70%'}}/>
-                        <Text>You've Not Completed a Todo Yet</Text>
+                        <Text>Nothing here yet</Text>
                         </View>)
                 }}
                 // I did this so as to give space for the component shown when a todo is long pressed
@@ -175,7 +191,9 @@ export default function MainListComponent({parentNavigation, navigation, done}){
                 )}
                 renderItem={({item})=>{
                     return (
-                      <AnimatedTouchableOpacity disabled={selectMultiple} onLongPress={()=>{longPressed(item.key, 'markFirst')}} onPress={()=>{navigation.navigate("editviewaddtodo", {key:item.key, purpose:'view', title:item.todo, details:item.details, priority:item.priority, completed:item.completed, date: item.date})}} style={item.key==key?[{ paddingHorizontal:8, paddingVertical:20, flexDirection:'row',alignItems:'center', justifyContent:'space-between'}, animatedTodoStyle]:{ paddingHorizontal:8, paddingVertical:20, flexDirection:'row',alignItems:'center', justifyContent:'space-between'}}>
+                      <AnimatedTouchableOpacity disabled={selectMultiple} onLongPress={()=>{longPressed(item.key, 'markFirst')}} onPress={()=>{navigation.navigate("editviewaddtodo", {key:item.key, purpose:'view', title:item.todo, details:item.details, priority:item.priority, completed:item.completed, date: item.date})}} 
+                      style={item.key==key?[{ paddingHorizontal:8, paddingVertical:20, flexDirection:'row',alignItems:'center', justifyContent:'space-between'}, animatedTodoStyle]:
+                      [{paddingHorizontal:8, paddingVertical:20, flexDirection:'row',alignItems:'center', justifyContent:'space-between'}, animatedSwipeStyle]}>
                           <View style={{flex:9/10}} >
                               <Text style={{fontSize:16, fontWeight:'bold'}}>{item.todo}</Text>
                               <Text style={{fontSize:15}} numberOfLines={1} ellipsizeMode="tail" >{item.details}</Text>

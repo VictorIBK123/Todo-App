@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack"
 import { context } from "./context/context"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 export default function(){
   const stack = createStackNavigator()
   const [todos, setTodos] =useState([])
@@ -25,6 +26,7 @@ export default function(){
     })()
   },[todos])
   return(
+    <GestureHandlerRootView style={{flex:1}}>
     <context.Provider value={{todos, setTodos}}>
       <NavigationContainer>
         <stack.Navigator screenOptions={{headerTitleAlign:'center', headerStyle:{height:60}}}>
@@ -33,5 +35,6 @@ export default function(){
         </stack.Navigator>
       </NavigationContainer>
     </context.Provider>
+    </GestureHandlerRootView>
   )
 }
