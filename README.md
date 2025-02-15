@@ -8,7 +8,7 @@ To set up the project locally, follow these steps:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/Todo-App.git
+git clone https://github.com/VictorIBK123/Todo-App.git
 cd Todo-App
 
 # Install dependencies
