@@ -1,6 +1,6 @@
 # Todo App
 
-A simple Todo application built with React Native to help users manage their daily tasks efficiently.
+A simple Todo application built with React Native to help users manage their daily tasks efficiently, with the ability to create, edit add and delete tasks with a cool user interface.
 
 ## Installation & Setup
 
@@ -53,4 +53,6 @@ npx expo start
 
 - **GitHub**: [@VictorIBK123](https://github.com/VictorIBK123)
 - **Email**: ibukunogundipe2@gmail.com
+- **Whatsapp**: [wa.link/k7uomi](wa.link/k7uomi)
+
 
