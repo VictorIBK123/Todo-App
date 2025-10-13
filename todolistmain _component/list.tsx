@@ -9,6 +9,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useFocusEffect} from "@react-navigation/native";
 import ListItem from './listItem';
 import FlatListComp from "./listflatlist";
+import { SafeAreaView } from "react-native-safe-area-context";
 const  MainListComponent =({parentNavigation, navigation, done}: {parentNavigation: any, navigation: any, done: boolean})=>{
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable)
     const {todos, setTodos} = useContext(context)
@@ -173,7 +174,7 @@ const  MainListComponent =({parentNavigation, navigation, done}: {parentNavigati
     leftDistance.value=0
 },[todos])
     return (
-        <ImageBackground imageStyle={{opacity:0.2, resizeMode:'contain'}} source={require('../assets/todo1.png')} style={{height:'100%'}}>
+        <ImageBackground imageStyle={{opacity:0.2, resizeMode:'contain', }} source={require('../assets/todo1.png')} style={{height:'100%'}}>
             <FlatListComp height={height}  widt={width} animatedTodoStyle={animatedTodoStyle} selectMultiple={selectMultiple} data={data} longPressed={longPressed} navigation={navigation} keysMarked={keysMarked} key={key} optionsHandler={optionsHandler} AnimatedTouchableOpacity={AnimatedTouchableOpacity} />
             {!selectMultiple && <TouchableOpacity  onPress={()=>{navigation.navigate("editviewaddtodo", {purpose:'addTodo'})}} style={{position:'absolute', bottom:50, right:50}}>
                 <Ionicons name="add-circle" size={60} color="#0b874f" />
@@ -200,7 +201,8 @@ const  MainListComponent =({parentNavigation, navigation, done}: {parentNavigati
                 </View>
 
             </AnimatedTouchableOpacity>
-            {selectMultiple && <View style={{position:'absolute', bottom:0, height:50, backgroundColor:'green', flexDirection:'row', width, justifyContent:'space-around', alignItems:'center'}}>
+            {selectMultiple && <View style={{position:'absolute', bottom:0,width,}}>
+            <View style={{ height:50, backgroundColor:'green', flexDirection:'row', width, justifyContent:'space-around', alignItems:'center'}}>
                 {!done && <TouchableOpacity onPress={()=>selectMultipleFunc('mark')} disabled={keysMarked.length==0} style={[style.selectMultiple, {opacity: keysMarked.length == 0 ? 0.7 : 1} ]}>
                     <Ionicons name="checkmark-done-sharp" size={24} color="white" />
                     <Text style={{color:'white'}}>Mark as Complete</Text>
@@ -221,7 +223,11 @@ const  MainListComponent =({parentNavigation, navigation, done}: {parentNavigati
                     <FontAwesome5 name="check-circle" size={24} color="white" />
                     <Text style={{color:'white'}}>Mark All</Text>
                 </TouchableOpacity>}
+                
+            </View>
+            <SafeAreaView edges={['bottom']} style={{backgroundColor:'green'}} />
             </View>}
+            
         </ImageBackground>
     )
 }

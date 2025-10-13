@@ -13,8 +13,8 @@ const ListItem:React.FC<any>  =memo(({animatedTodoStyle, item,del, selectMultipl
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable)
     return (
         <AnimatedTouchableOpacity  disabled={selectMultiple}  onLongPress={()=>{longPressed(item.key, 'markFirst')}} onPress={navigate} 
-        style={del?[{ paddingHorizontal:8, paddingVertical:20, flexDirection:'row',alignItems:'center', justifyContent:'space-between'}, animatedTodoStyle]:
-        [{paddingHorizontal:8, paddingVertical:20, flexDirection:'row',alignItems:'ce nter', justifyContent:'space-between'}]}>
+        style={del?[{ paddingHorizontal:15, paddingVertical:20, flexDirection:'row',alignItems:'center', justifyContent:'space-between'}, animatedTodoStyle]:
+        [{paddingHorizontal:15, paddingVertical:20, flexDirection:'row',alignItems:'ce nter', justifyContent:'space-between'}]}>
             <View style={{flex:9/10}} >
                 <Text style={{fontSize:16, fontWeight:'bold'}}>{item.todo}</Text>
                 <Text style={{fontSize:15}} numberOfLines={1} ellipsizeMode="tail" >{item.details}</Text>
@@ -28,7 +28,7 @@ const ListItem:React.FC<any>  =memo(({animatedTodoStyle, item,del, selectMultipl
         {selectMultiple && !mark && <TouchableOpacity onPress={()=>{longPressed(item.key, 'mark')}} style={{flex:1/10}}>
             <MaterialIcons name="check-box-outline-blank" size={24} color="green" />
         </TouchableOpacity>}
-            <View style={{position:'absolute', paddingHorizontal:8, bottom:0, flexDirection:'row',alignItems:'center'}}>
+            <View style={{position:'absolute', paddingHorizontal:15, bottom:0, flexDirection:'row',alignItems:'center'}}>
                 <View>
                     <Octicons name="dot-fill" size={14} color="green" />
                 </View>

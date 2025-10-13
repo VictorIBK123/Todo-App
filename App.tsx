@@ -6,6 +6,7 @@ import { context } from "./context/context"
 import { useEffect, useMemo, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
+import { SafeAreaView } from "react-native-safe-area-context"
 export default function(){
   const stack = createStackNavigator()
   const [todos, setTodos] =useState([])
@@ -28,11 +29,12 @@ export default function(){
   return(
     <context.Provider value={useMemo(()=>({todos, setTodos}),[todos,setTodos])}>
       <NavigationContainer>
-        <stack.Navigator screenOptions={{headerTitleAlign:'center', headerStyle:{height:60}}}>
+        <stack.Navigator screenOptions={{headerTitleAlign:'center', headerStyle:{height:80}}}>
             <stack.Screen name="notcompletedlist" options={{title:'Todos'}} component={Tabs} />
             <stack.Screen name="editviewaddtodo" options={{title:'Add Todo'}} component={EditViewAddTodo} />
         </stack.Navigator>
       </NavigationContainer>
+      
     </context.Provider>
   )
 }

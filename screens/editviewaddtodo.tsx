@@ -67,20 +67,20 @@ export default function EditViewAddTodo({route}:{route: any}){
     }
     return (
         <ScrollView style={{height,}}>
-            <View style={{ paddingHorizontal:5, paddingTop:10, paddingBottom:10}}>
+            <View style={{ paddingHorizontal:10, paddingTop:10, paddingBottom:10}}>
                 <View style={{backgroundColor:'white', borderRadius:5,paddingHorizontal:5, paddingVertical:5}}>
-                    <Text style={{fontSize:20}}>Title</Text>
-                    <TextInput  value={title} onBlur={()=>{setInputBlur1(true)}}  onChangeText={(value)=>textInputHandler(value, 'title')} editable={editable} returnKeyType="next" maxLength={40} numberOfLines={1} multiline={false} style={{borderRadius:10,borderColor:'green',borderWidth: editable?1:0, color:'black', padding:5,width: '90%', paddingVertical:3}} />
+                    <Text style={{fontSize:20, paddingLeft:10}}>Title</Text>
+                    <TextInput  value={title} onBlur={()=>{setInputBlur1(true)}}  onChangeText={(value)=>textInputHandler(value, 'title')} editable={editable} returnKeyType="next" maxLength={40} numberOfLines={1} multiline={false} style={{borderRadius:10,borderColor:'green',borderWidth: editable?1:0, color:'black', paddingLeft:10,width: '90%', paddingVertical:7, marginLeft:10, marginTop:5}} />
                     {inputBlur1 && title.length==0 &&  <Text style={{color:'red'}}>Please enter your todo title</Text>}
                 </View>
                 <View style={{backgroundColor:'white', borderRadius:5,paddingVertical:5,paddingHorizontal:5, marginTop:15}}>
-                    <Text style={{fontSize:20}}>Details</Text>
-                    <TextInput value={details} onBlur={()=>{setInputBlur2(true)}} editable={editable} onChangeText={(value)=>textInputHandler(value, 'details')} multiline={true} style={{borderRadius:10, color:'black', textAlignVertical:'top',padding:5,borderColor:'green', width: '90%', height:200,borderWidth: editable?1:0,  paddingVertical:3}} />
+                    <Text style={{fontSize:20, paddingLeft:10}}>Details</Text>
+                    <TextInput value={details} onBlur={()=>{setInputBlur2(true)}} editable={editable} onChangeText={(value)=>textInputHandler(value, 'details')} multiline={true} style={{borderRadius:10, color:'black', textAlignVertical:'top',marginLeft:10,borderColor:'green', width: '90%', height:200,borderWidth: editable?1:0,  paddingVertical:3, marginVertical:5}} />
                     {inputBlur2 && title.length==0 && <Text style={{color:'red'}}>Please enter your todo details</Text>}
                 </View>
                 <View style={{marginTop:15, backgroundColor:'white',paddingVertical:5,paddingHorizontal:5, borderRadius:5}}>
-                    <Text style={{fontSize:20}}>Priority</Text>
-                    <View style={{flexDirection:'row'}}>
+                    <Text style={{fontSize:20, paddingLeft:10}}>Priority</Text>
+                    <View style={{flexDirection:'row', paddingLeft:10, marginTop:5}}>
                         <TouchableOpacity disabled={!editable} onPress={()=>{priorityHandler('high')}} style={{flexDirection:'row'}}>
                             {priority=='high' && <Ionicons name="radio-button-on" size={18} color="green" />}
                             {priority!='high' && <Ionicons name="radio-button-off-sharp" size={18} color="green" />}
@@ -99,14 +99,14 @@ export default function EditViewAddTodo({route}:{route: any}){
                     </View>
                 </View>
                 <View style={{marginTop:15, backgroundColor:'white',paddingVertical:5,paddingHorizontal:5, borderRadius:5}}>
-                    <Text style={{fontSize:20}}>Due Date</Text>
+                    <Text style={{fontSize:20, paddingLeft:10}}>Due Date</Text>
                     <View style={{flexDirection:'row', alignItems:'center', }}>
-                        <TouchableOpacity disabled={!editable} onPress={()=>{setMode('date'); setOpen(true)}} style={{flexDirection:'row', alignItems:'center', marginRight:(20/100)*width}}>
-                            <FontAwesome5 name="calendar-alt" size={24} color="green" />
+                        <TouchableOpacity disabled={!editable} onPress={()=>{setMode('date'); setOpen(true)}} style={{flexDirection:'row', alignItems:'center', marginRight:(20/100)*width, paddingLeft:10}}>
+                            <FontAwesome5 name="calendar-alt" size={20} color="green" />
                             <Text style={{marginLeft:10}}>{day.toString().length>1?day.toString():'0'+day.toString()}-{month.toString().length>1?month.toString():'0'+month.toString()}-{year.toString().length>1?year.toString():'0'+year.toString()}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity disabled={!editable} onPress={()=>{setMode('time'); setOpen(true)}} style={{flexDirection:'row', alignItems:'center'}}>
-                            <FontAwesome5 name="clock" size={24} color="green" />
+                        <TouchableOpacity disabled={!editable} onPress={()=>{setMode('time'); setOpen(true)}} style={{flexDirection:'row', alignItems:'center', marginTop:5}}>
+                            <FontAwesome5 name="clock" size={20} color="green" />
                             <Text style={{marginLeft:10}}>{(()=>{
                                 if (hr==12){
                                     return (hr)
@@ -130,12 +130,12 @@ export default function EditViewAddTodo({route}:{route: any}){
                 </View>
                 <View style={{backgroundColor:'white', borderRadius:5,paddingHorizontal:5,paddingVertical:10, marginTop:15}}>
                         {!editable && <View style={{flexDirection:'row'}}>
-                            <Text style={{fontSize:20}}>Todo Status: </Text>
+                            <Text style={{fontSize:20, paddingLeft:10}}>Todo Status: </Text>
                             <Text style={{fontSize:15,backgroundColor:'#00000022', padding:5, borderRadius:5}}>{completed?'Completed':'Pending'} </Text>
                         </View>}
                         {editable &&route.params.purpose=='view' &&  <View >
-                        <Text style={{fontSize:20}}>Todo Status: </Text>
-                        <View style={{flexDirection:'row'}}>
+                        <Text style={{fontSize:20, paddingLeft:10}}>Todo Status: </Text>
+                        <View style={{flexDirection:'row', paddingLeft:10, marginTop:5}}>
                             <TouchableOpacity onPress={()=>{statusHandler(true)}} style={{flexDirection:'row'}}>
                                 {completed && <Ionicons name="radio-button-on" size={18} color="green" />}
                                 {!completed && <Ionicons name="radio-button-off-sharp" size={18} color="green" />}
