@@ -10,13 +10,19 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
+    "@google/genai": "^1.25.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/material-top-tabs": "^7.3.7",
     "@react-navigation/native": "^7.1.17",
     "@react-navigation/stack": "^7.4.8",
+    "assemblyai": "^4.18.4",
+    "axios": "^1.12.2",
     "eas-cli": "^16.18.0",
     "expo": "~54.0.0",
+    "expo-audio": "~1.0.13",
+    "expo-av": "~16.0.7",
     "expo-dev-client": "~6.0.15",
+    "expo-file-system": "^19.0.17",
     "expo-status-bar": "~3.0.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -32,7 +38,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-  "@types/react": "^19.1.0",
+    "@types/react": "^19.1.0",
     "typescript": "~5.8.3"
   },
   "private": true

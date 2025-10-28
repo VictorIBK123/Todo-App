@@ -44,7 +44,7 @@ export default function EditViewAddTodo({route}:{route: any}){
         setCompleted(value)
     }
     const handleSave=(purpose: string)=>{
-        if (!(title.length==0 || details.length==0 || priority==null)){
+        if (!(title.length==0 ||  priority==null)){
             if (purpose=='addTodo' && !canNowEdit){
                 setCanNowEdit(true)
                 setTodos([{todo: title, details, completed, priority, key: todos.length!=0?todos[0].key+1:1 ,date:date.toISOString()},...todos])
@@ -74,7 +74,7 @@ export default function EditViewAddTodo({route}:{route: any}){
                     {inputBlur1 && title.length==0 &&  <Text style={{color:'red'}}>Please enter your todo title</Text>}
                 </View>
                 <View style={{backgroundColor:'white', borderRadius:5,paddingVertical:5,paddingHorizontal:5, marginTop:15}}>
-                    <Text style={{fontSize:20, paddingLeft:10}}>Details</Text>
+                    <Text style={{fontSize:20, paddingLeft:10}}>Details (Optional)</Text>
                     <TextInput value={details} onBlur={()=>{setInputBlur2(true)}} editable={editable} onChangeText={(value)=>textInputHandler(value, 'details')} multiline={true} style={{borderRadius:10, color:'black', textAlignVertical:'top',marginLeft:10,borderColor:'green', width: '90%', height:200,borderWidth: editable?1:0,  paddingVertical:3, marginVertical:5}} />
                     {inputBlur2 && title.length==0 && <Text style={{color:'red'}}>Please enter your todo details</Text>}
                 </View>

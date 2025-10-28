@@ -1,20 +1,28 @@
-import { Easing, FlatList, Image, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native"
-import Ionicons from '@expo/vector-icons/Ionicons';
-import Octicons from '@expo/vector-icons/Octicons';
+import { ActivityIndicator, Alert, Easing, FlatList, Image, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native"
+import Ionicons from '@expo/vector-icons/Ionicons.js';
+import Octicons from '@expo/vector-icons/Octicons.js';
 import React ,{ memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { context } from "../context/context.js"
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons.js';
 import Animated, {runOnJS, useAnimatedProps, useAnimatedStyle, useSharedValue, withTiming} from "react-native-reanimated";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5.js';
 import { useFocusEffect} from "@react-navigation/native";
-import ListItem from './listItem';
-import FlatListComp from "./listflatlist";
+import ListItem from './listItem.js';
+import FlatListComp from "./listflatlist.js";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  useAudioRecorder,
+  AudioModule,
+  useAudioPlayer,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioRecorderState,
+} from 'expo-audio';
+import {useConvertToText} from "../custom-hooks/speech-to-text.js";
 const  MainListComponent =({parentNavigation, navigation, done}: {parentNavigation: any, navigation: any, done: boolean})=>{
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable)
     const {todos, setTodos} = useContext(context)
-    
-      
+    const [isTranscribing, setIsTranscribing] = useState(false)
     // storing items marked
     const [keysMarked, setKeysMarked] = useState<any[]>([])
     const [selectMultiple, setSelectMultiple] =useState(false)
@@ -24,19 +32,21 @@ const  MainListComponent =({parentNavigation, navigation, done}: {parentNavigati
     const [details, setDetails] = useState(null)
     const [priority, setPriority] = useState(null)
     const [completed, setCompleted] = useState(null)
-    const [date, setDate] = useState(null)
+    const [date, setDate] = useState<Date | null>(new Date())
     const {height, width} =  useWindowDimensions()
     const leftDistance = useSharedValue(0)
     const top = useSharedValue(height)
+    const [uri, setUri] = useState<string | null>(null)
     const translateX = useSharedValue(0)//used to translate the component to right when swipe is detected
-    
+    const [audioSource, setAudioSource] = useState<string|null>()
+
     // if todo is changed , the left position of each component will be readjested to the default (0), 
     // this is done because when the delete button is pressed in the options, the animation will that will shift the component to be deleted will
     // be shifted to the right, but we have to set it backto 0 when the component is deleted
     const clickOut=()=>{
         top.value = withTiming(height, {duration:500})
     }
-    const optionsHandler=useCallback((key: React.SetStateAction<null>,purpose: any, title: React.SetStateAction<null>, details: React.SetStateAction<null>,priority: React.SetStateAction<null>, completed: React.SetStateAction<null>, date: React.SetStateAction<null> )=>{
+    const optionsHandler=useCallback((key: React.SetStateAction<null>,purpose: any, title: React.SetStateAction<null>, details: React.SetStateAction<null>,priority: React.SetStateAction<null>, completed: React.SetStateAction<null>, date: React.SetStateAction<Date | null>)=>{
         setKey(key); setPurpose('view'); setTitle(title); setDetails(details); setPriority(priority); setCompleted(completed); setDate(date)
         top.value = withTiming(0, {duration:500})
     },[])
@@ -167,19 +177,61 @@ const  MainListComponent =({parentNavigation, navigation, done}: {parentNavigati
         setKeysMarked([])
     }
   }
-
+  const player = useAudioPlayer(audioSource)
   const animatedStyle = useAnimatedStyle(()=>({top:top.value})) //animated style for the options
   const animatedTodoStyle = useAnimatedStyle(()=>({transform:[{translateX:leftDistance.value}]}))
   useEffect(()=>{
     leftDistance.value=0
 },[todos])
+    const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+    const recorderState = useAudioRecorderState(audioRecorder);
+
+    const record = async () => {
+        await audioRecorder.prepareToRecordAsync();
+        audioRecorder.record();
+    };
+
+    const stopRecording = async () => {
+        await audioRecorder.stop();
+        setAudioSource(audioRecorder.uri);
+        setIsTranscribing(true)
+        if (audioRecorder.uri) {
+            console.log('Recording stopped and stored at', audioRecorder.uri);
+            try {
+                const newTodo = await useConvertToText(audioRecorder.uri as string)
+                console.log(newTodo)
+                setTodos([JSON.parse((newTodo as unknown as string).trim()), ...todos])
+            } catch (error) {
+                alert(error)
+            }
+            setIsTranscribing(false)
+            // setTodos([{todo: title, details, completed, priority, key: todos.length!=0?todos[0].key+1:1 ,date:date.toISOString()},...todos])
+        }
+    };
+
+    useEffect(() => {
+    (async () => {
+        const status = await AudioModule.requestRecordingPermissionsAsync();
+        if (!status.granted) {
+        Alert.alert('Permission to access microphone was denied');
+        }
+
+        setAudioModeAsync({
+        playsInSilentMode: true,
+        allowsRecording: true,
+        });
+    })();
+    }, []);
     return (
         <ImageBackground imageStyle={{opacity:0.2, resizeMode:'contain', }} source={require('../assets/todo1.png')} style={{height:'100%'}}>
             <FlatListComp height={height}  widt={width} animatedTodoStyle={animatedTodoStyle} selectMultiple={selectMultiple} data={data} longPressed={longPressed} navigation={navigation} keysMarked={keysMarked} key={key} optionsHandler={optionsHandler} AnimatedTouchableOpacity={AnimatedTouchableOpacity} />
             {!selectMultiple && <TouchableOpacity  onPress={()=>{navigation.navigate("editviewaddtodo", {purpose:'addTodo'})}} style={{position:'absolute', bottom:50, right:50}}>
                 <Ionicons name="add-circle" size={60} color="#0b874f" />
             </TouchableOpacity>}
-
+            {!selectMultiple && !isTranscribing &&  <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={{position:'absolute', bottom:130, right:50}}>
+                <Ionicons name="mic-circle" size={60} color={recorderState.isRecording ? 'red' : 'green'} />
+            </TouchableOpacity>}
+            {!selectMultiple && isTranscribing && <ActivityIndicator color={'green'} style={{position:'absolute', bottom:150, right:60,}} size='large' />}
             <AnimatedTouchableOpacity onPress={clickOut} style={[{position:'absolute', justifyContent:'center', alignItems:'center', height,width, backgroundColor:'#ffffff00'}, animatedStyle]}>
                 <View style={{width:'80%', height:'40%',borderRadius:5, backgroundColor:'white' , elevation:50 , paddingHorizontal:20}}>
                     <TouchableOpacity onPress={()=>{optionClicked('details')}} style={style.options}>
