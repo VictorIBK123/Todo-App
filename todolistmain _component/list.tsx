@@ -7,8 +7,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons.js';
 import Animated, {runOnJS, useAnimatedProps, useAnimatedStyle, useSharedValue, withTiming} from "react-native-reanimated";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5.js';
 import { useFocusEffect} from "@react-navigation/native";
-import ListItem from './listItem.js';
-import FlatListComp from "./listflatlist.js";
+import FlatListComp from "./listflatlist";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useAudioRecorder,
@@ -18,7 +17,7 @@ import {
   setAudioModeAsync,
   useAudioRecorderState,
 } from 'expo-audio';
-import {useConvertToText} from "../custom-hooks/speech-to-text.js";
+import {useConvertToText} from "../custom-hooks/speech-to-text";
 const  MainListComponent =({parentNavigation, navigation, done}: {parentNavigation: any, navigation: any, done: boolean})=>{
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(Pressable)
     const {todos, setTodos} = useContext(context)
